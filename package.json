@@ -1,0 +1,25 @@
+{
+  "name": "gulp-cdn-replace",
+  "version": "0.0.1",
+  "description": "gulp-cdn-replace\r ================",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/JiangJie/gulp-cdn-replace.git"
+  },
+  "keywords": [
+    "gulp",
+    "cdn",
+    "replace",
+    "hash"
+  ],
+  "author": "Jarvis Jiang <jiang115jie@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/JiangJie/gulp-cdn-replace/issues"
+  },
+  "homepage": "https://github.com/JiangJie/gulp-cdn-replace"
+}
