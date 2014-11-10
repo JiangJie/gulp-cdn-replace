@@ -2,7 +2,9 @@ gulp-cdn-replace
 ================
 
 > 替换html里面js和css引用地址
+
 > replace js' `src` and css' `href` with their cdn url.
+
 > No need for `<!-- build --><!-- endbuild -->` comments.
 
 ## Install
@@ -46,9 +48,9 @@ Type: `Object`
 #### options.root.js
 Type: `String`
 
-The CDN preix for js files.
+The CDN prefix for js files.
 
 #### options.root.css
 Type: `String`
 
-The CDN preix for css files.
+The CDN prefix for css files.
