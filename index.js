@@ -55,7 +55,8 @@ module.exports = function(option) {
             return match.replace(/src\s*=\s*["|']([^"'>]+)["|']/, 'src="' + getNewUrl(url) + '"');
         })
             .replace(cssReg, function(match, url) {
-                return match.replace(/href\s*=\s*["|']([^"']+)["|']/, 'href="' + getNewUrl(url) + '"');
+                isCss(match) && (match = match.replace(/href\s*=\s*["|']([^"']+)["|']/, 'href="' + getNewUrl(url) + '"'));
+                return match;
             });
 
         file.contents = new Buffer(contents);

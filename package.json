@@ -1,6 +1,6 @@
 {
   "name": "gulp-cdn-replace",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "gulp-cdn-replace\r ================",
   "main": "index.js",
   "scripts": {
