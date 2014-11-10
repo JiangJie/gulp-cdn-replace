@@ -10,7 +10,10 @@ var jsReg = /<\s*script\s+.*src\s*=\s*["|']([^"']+)[^>]*><\s*\/\s*script\s*>/gim
 var cssReg = /<\s*link\s+.*href\s*=\s*["|']([^"']+)[^>]*>/gim;
 var isCss = function(str) {
     return /rel\s*=\s*["|']stylesheet["|']/.test(String(str));
-}
+};
+var isHTTP = function(str) {
+    return /^https?:/.test(String(str));
+};
 
 
 module.exports = function(option) {
@@ -28,20 +31,24 @@ module.exports = function(option) {
 
         var dir = path.resolve.apply(null, paths);
         
-        var files = fs.readdirSync(dir);
-        filename = filename.split('.');
+        try {
+            var files = fs.readdirSync(dir);
+            filename = filename.split('.');
 
-        var newUrl;
-        files.some(function(item) {
-            item = item.split('.');
-            if(filename[0] === item[0] && filename[filename.length - 1] === item[item.length - 1]) {
-                paths.shift();
-                newUrl = prefix + paths.join('/') + '/' + item.join('.');
-                return;
-            }
-        });
+            var newUrl;
+            files.some(function(item) {
+                item = item.split('.');
+                if(filename[0] === item[0] && filename[filename.length - 1] === item[item.length - 1]) {
+                    paths.shift();
+                    newUrl = prefix + paths.join('/') + '/' + item.join('.');
+                    return true;
+                }
+            });
 
-        return newUrl;
+            return newUrl;
+        } catch(e) {
+            return url;
+        }
     }
 
     return through.obj(function(file, enc, fn) {
@@ -52,10 +59,11 @@ module.exports = function(option) {
         // Buffer
         var contents = file.contents.toString();
         contents = contents.replace(jsReg, function(match, url) {
-            return match.replace(/src\s*=\s*["|']([^"'>]+)["|']/, 'src="' + getNewUrl(url) + '"');
+            isHTTP(url) || (match = match.replace(/src\s*=\s*["|']([^"'>]+)["|']/, 'src="' + getNewUrl(url) + '"'));
+            return match;
         })
             .replace(cssReg, function(match, url) {
-                isCss(match) && (match = match.replace(/href\s*=\s*["|']([^"']+)["|']/, 'href="' + getNewUrl(url) + '"'));
+                isHTTP(url) || (isCss(match) && (match = match.replace(/href\s*=\s*["|']([^"']+)["|']/, 'href="' + getNewUrl(url) + '"')));
                 return match;
             });
 
