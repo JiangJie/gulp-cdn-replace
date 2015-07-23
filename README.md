@@ -22,8 +22,8 @@ gulp.task('cdn', function() {
         .pipe(cdn({
             dir: './dist',
             root: {
-                js: 'http://cdn.example.com/somename/',
-                css: 'http://cdn.example.com/somename/'
+                js: 'http://cdn.example.com/somename',
+                css: 'http://cdn.example.com/somename'
             }
         }))
         .pipe(gulp.dest('./dist'));
