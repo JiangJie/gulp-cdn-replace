@@ -8,25 +8,35 @@ var through = require('through2');
 
 var jsReg = /<\s*script\s+.*src\s*=\s*["|']([^"']+)[^>]*><\s*\/\s*script\s*>/gim;
 var cssReg = /<\s*link\s+.*href\s*=\s*["|']([^"']+)[^>]*>/gim;
+var imgReg = /url\s*\(\s*['|"]?([^'")]+)['|"]?\s*\)/gim;
+var base64Reg = /^data:image\/([^;]+);base64,/;
+
 var isCss = function(str) {
+    if (!str) return false;
     return /rel\s*=\s*["|']stylesheet["|']/.test(String(str));
 };
 var isHTTP = function(str) {
+    if (!str) return false;
     return /^https?:/.test(String(str));
 };
-
+var isBase64 = function(str) {
+    if (!str) return false;
+    return base64Reg.test(str);
+};
 
 module.exports = function(option) {
     option = option || {};
     option.root = option.root || {};
     option.dir = option.dir || './dist';
 
-    function getNewUrl(url) {
+    function getNewUrl(url, ext) {
         var paths = url.split('/');
         var filename = paths.pop();
 
-        var prefix = option.root[filename.split('.').pop()] || '';
-        prefix[prefix.length - 1] === '/' || (prefix += '/');
+        ext = ext || filename.split('.').pop();
+
+        var prefix = option.root[ext] || '';
+        prefix && (prefix[prefix.length - 1] === '/' || (prefix += '/'));
 
         paths.unshift(option.dir);
 
@@ -60,11 +70,15 @@ module.exports = function(option) {
         // Buffer
         var contents = file.contents.toString();
         contents = contents.replace(jsReg, function(match, url) {
-                isHTTP(url) || (match = match.replace(/src\s*=\s*["|']([^"'>]+)["|']/, 'src="' + getNewUrl(url) + '"'));
+                isHTTP(url) || (match = match.replace(/src\s*=\s*["|']([^"'>]+)["|']/, 'src="' + getNewUrl(url, 'js') + '"'));
                 return match;
             })
             .replace(cssReg, function(match, url) {
-                isHTTP(url) || (isCss(match) && (match = match.replace(/href\s*=\s*["|']([^"']+)["|']/, 'href="' + getNewUrl(url) + '"')));
+                isHTTP(url) || (isCss(match) && (match = match.replace(/href\s*=\s*["|']([^"']+)["|']/, 'href="' + getNewUrl(url, 'css') + '"')));
+                return match;
+            })
+            .replace(imgReg, function(match, url) {
+                isHTTP(url) || isBase64(url) || (match = match.replace(/url\s*\(\s*['|"]?([^'")]+)['|"]?\s*\)/, 'url("' + getNewUrl(url, 'css') + '")'));
                 return match;
             });
 
