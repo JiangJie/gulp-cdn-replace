@@ -46,7 +46,7 @@ module.exports = function(option) {
             var files = fs.readdirSync(dir);
             filename = filename.split('.');
 
-            var newUrl;
+            var newUrl = url;
             files.some(function(item) {
                 item = item.split('.');
                 if (filename[0] === item[0] && filename[filename.length - 1] === item[item.length - 1]) {
