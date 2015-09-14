@@ -8,6 +8,7 @@ var through = require('through2');
 
 var jsReg = /<\s*script\s+.*src\s*=\s*["|']([^"']+)[^>]*><\s*\/\s*script\s*>/gim;
 var cssReg = /<\s*link\s+.*href\s*=\s*["|']([^"']+)[^>]*>/gim;
+var imageReg = /<\s*img\s+.*src\s*=\s*["|']([^"']+)[^>]*>/gim;
 var imgReg = /url\s*\(\s*['|"]?([^'")]+)['|"]?\s*\)/gim;
 var base64Reg = /^data:image\/([^;]+);base64,/;
 
@@ -71,6 +72,10 @@ module.exports = function(option) {
         var contents = file.contents.toString();
         contents = contents.replace(jsReg, function(match, url) {
                 isHTTP(url) || (match = match.replace(/src\s*=\s*["|']([^"'>]+)["|']/, 'src="' + getNewUrl(url, 'js') + '"'));
+                return match;
+            })
+            .replace(imageReg, function(match, url) {
+                isHTTP(url) || (match = match.replace(/src\s*=\s*["|']([^"'>]+)["|']/, 'src="' + getNewUrl(url, 'image') + '"'));
                 return match;
             })
             .replace(cssReg, function(match, url) {
