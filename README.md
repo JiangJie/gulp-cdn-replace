@@ -27,8 +27,13 @@ gulp.task('cdn', function() {
                 image: 'http://cdn.example.com/somename'
             },
             version: {
-				timestamp: true // default false, add '?v=1442417693439' version control which it's the timestamp of task running
-        	}
+            	/*
+            	* Add '?v=1442417693439' version control which it's the timestamp of task running
+            	*
+            	* default false
+            	*/
+            	timestamp: true 
+            }
         }))
         .pipe(gulp.dest('./dist'));
 });
