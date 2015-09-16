@@ -30,6 +30,15 @@ module.exports = function(option) {
     option.root = option.root || {};
     option.dir = option.dir || './dist';
 
+    var version = '';
+
+    if (option.version) {
+        if (option.version.timestamp) {
+            version = "?v=" + (new Date()).getTime();
+        }
+        // if(option.version.md5)
+    }
+
     function getNewUrl(url, ext) {
         var paths = url.split('/');
         var filename = paths.pop();
@@ -57,9 +66,9 @@ module.exports = function(option) {
                 }
             });
 
-            return newUrl;
+            return newUrl + version;
         } catch (e) {
-            return url;
+            return url + version;
         }
     }
 

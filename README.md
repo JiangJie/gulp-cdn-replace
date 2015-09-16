@@ -23,8 +23,12 @@ gulp.task('cdn', function() {
             dir: './dist',
             root: {
                 js: 'http://cdn.example.com/somename',
-                css: 'http://cdn.example.com/somename'
-            }
+                css: 'http://cdn.example.com/somename',
+                image: 'http://cdn.example.com/somename'
+            },
+            version: {
+				timestamp: true // default false, add '?v=1442417693439' version control which it's the timestamp of task running
+        	}
         }))
         .pipe(gulp.dest('./dist'));
 });
