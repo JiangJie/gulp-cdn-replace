@@ -57,8 +57,8 @@ module.exports = function(option) {
                 }
             });
 
-            // replace multi `/` with single `/`
-            newUrl = newUrl.replace(/(\/)+/g, '/');
+            // replace multi `/` with single `/` except startswith `//`
+            // newUrl = newUrl.replace(/(?<!^)(\/+)/g,'/');
 
             return newUrl;
         } catch (e) {
