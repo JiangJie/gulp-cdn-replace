@@ -53,4 +53,10 @@ The CDN prefix for js files.
 #### options.root.css
 Type: `String`
 
+#### options.inlineReplace
+Type: `Boolean`
+Default: `true`
+
+Whether replace tag with `inline` attribute.
+
 The CDN prefix for css files.

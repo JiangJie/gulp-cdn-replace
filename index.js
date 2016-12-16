@@ -11,6 +11,7 @@ var cssReg = /<\s*link\s+.*href\s*=\s*["|']([^"']+)[^>]*>/gim;
 var imageReg = /<\s*img\s+.*src\s*=\s*["|']([^"']+)[^>]*>/gim;
 var imgReg = /url\s*\(\s*['|"]?([^'")]+)['|"]?\s*\)/gim;
 var base64Reg = /^data:image\/([^;]+);base64,/;
+var inlineReg = /\s+inline[\s+>]/;
 
 var isCss = function(str) {
     if (!str) return false;
@@ -18,7 +19,7 @@ var isCss = function(str) {
 };
 var isHTTP = function(str) {
     if (!str) return false;
-    return /^https?:/.test(String(str));
+    return /^(https?:)?\/\//.test(String(str));
 };
 var isBase64 = function(str) {
     if (!str) return false;
@@ -30,14 +31,18 @@ module.exports = function(option) {
     option.root = option.root || {};
     option.dir = option.dir || './dist';
 
-    function getNewUrl(url, ext) {
+    function getNewUrl(url, ext, inline) {
         var paths = url.split('/');
         var filename = paths.pop();
 
         ext = ext || filename.split('.').pop();
 
-        var prefix = option.root[ext] || '';
-        prefix && (prefix[prefix.length - 1] === '/' || (prefix += '/'));
+        // inline source
+        var prefix = '';
+        if(!inline) {
+            prefix = option.root[ext] || '';
+            prefix && (prefix[prefix.length - 1] === '/' || (prefix += '/'));
+        }
 
         paths.unshift(option.dir);
 
@@ -73,20 +78,24 @@ module.exports = function(option) {
 
         // Buffer
         var contents = file.contents.toString();
+        var inlineReplace = option.inlineReplace;
+        // default is true
+        'undefined' === typeof inlineReplace && (inlineReplace = true);
+
         contents = contents.replace(jsReg, function(match, url) {
-                isHTTP(url) || (match = match.replace(/src\s*=\s*["|']([^"'>]+)["|']/, 'src="' + getNewUrl(url, 'js') + '"'));
+                isHTTP(url) || (match = match.replace(/src\s*=\s*["|']([^"'>]+)["|']/, 'src="' + getNewUrl(url, 'js', !inlineReplace && inlineReg.test(match)) + '"'));
                 return match;
             })
             .replace(imageReg, function(match, url) {
-                isHTTP(url) || (match = match.replace(/src\s*=\s*["|']([^"'>]+)["|']/, 'src="' + getNewUrl(url, 'image') + '"'));
+                isHTTP(url) || (match = match.replace(/src\s*=\s*["|']([^"'>]+)["|']/, 'src="' + getNewUrl(url, 'image', !inlineReplace && inlineReg.test(match)) + '"'));
                 return match;
             })
             .replace(cssReg, function(match, url) {
-                isHTTP(url) || (isCss(match) && (match = match.replace(/href\s*=\s*["|']([^"']+)["|']/, 'href="' + getNewUrl(url, 'css') + '"')));
+                isHTTP(url) || (isCss(match) && (match = match.replace(/href\s*=\s*["|']([^"']+)["|']/, 'href="' + getNewUrl(url, 'css', !inlineReplace && inlineReg.test(match)) + '"')));
                 return match;
             })
             .replace(imgReg, function(match, url) {
-                isHTTP(url) || isBase64(url) || (match = match.replace(/url\s*\(\s*['|"]?([^'")]+)['|"]?\s*\)/, 'url("' + getNewUrl(url, 'css') + '")'));
+                isHTTP(url) || isBase64(url) || (match = match.replace(/url\s*\(\s*['|"]?([^'")]+)['|"]?\s*\)/, 'url(' + getNewUrl(url, 'css', false) + ')'));
                 return match;
             });
 
