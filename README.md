@@ -53,6 +53,13 @@ The CDN prefix for js files.
 #### options.root.css
 Type: `String`
 
+The CDN prefix for css files.
+
+#### options.root.cssImg
+Type: `String`
+
+The CDN prefix for css images.
+
 #### options.inlineReplace
 Type: `Boolean`
 Default: `true`

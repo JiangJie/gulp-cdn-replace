@@ -95,7 +95,7 @@ module.exports = function(option) {
                 return match;
             })
             .replace(imgReg, function(match, url) {
-                isHTTP(url) || isBase64(url) || (match = match.replace(/url\s*\(\s*['|"]?([^'")]+)['|"]?\s*\)/, 'url(' + getNewUrl(url, 'css', false) + ')'));
+                isHTTP(url) || isBase64(url) || (match = match.replace(/url\s*\(\s*['|"]?([^'")]+)['|"]?\s*\)/, 'url(' + getNewUrl(url, 'cssImg', false) + ')'));
                 return match;
             });
 
