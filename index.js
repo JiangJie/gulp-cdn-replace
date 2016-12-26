@@ -50,14 +50,15 @@ module.exports = function(option) {
 
         try {
             var files = fs.readdirSync(dir);
-            filename = filename.split('.');
+            // filename = filename.split('.');
 
             var newUrl = url;
             files.some(function(item) {
-                item = item.split('.');
-                if (filename[0] === item[0] && filename[filename.length - 1] === item[item.length - 1]) {
+                var index = filename.lastIndexOf('.');
+                
+                if (new RegExp('^' + filename.slice(0, index).replace(/\./g, '\\.') + '.*' + filename.slice(index).replace(/\./g, '\\.') + '$').test(item)) {
                     paths.shift();
-                    newUrl = prefix + paths.join('/') + '/' + item.join('.');
+                    newUrl = prefix + paths.join('/') + '/' + item;
                     return true;
                 }
             });
